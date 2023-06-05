@@ -18,6 +18,7 @@ GNU GENERAL PUBLIC LICENSE
 import lgpio
 from time import sleep
 
+
 pinNumber = 18 # Set GPIO 18/Pin 12 to PWM for signal to ESC
 handle = lgpio.gpiochip_open(0) # if OK this will return 0, otherwise negative number is an error
 MIN_PULSES = 770
