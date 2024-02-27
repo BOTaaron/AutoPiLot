@@ -15,7 +15,7 @@ GNU GENERAL PUBLIC LICENSE
  and let me know if any issues. I highly recommend removing the propellor while running the test.
  This uses software PWM.
 '''
-import lgpio
+import pigpio
 from time import sleep
 
 
