@@ -1,4 +1,4 @@
-
+# placeholder for controlling the motor, likely to be removed/changed in the future
 import time
 from RPi import GPIO
 
@@ -50,7 +50,7 @@ def arm():
     print("Arming ESC. Ensure throttle is at minimum.")
     # Ensuring the throttle (simulated by PWM pulse width) is at its minimum.
     set_duty_cycle(MIN_PULSE_WIDTH)
-    time.sleep(1)  # Wait a bit before powering ESC to ensure it detects this as the minimum position.
+    time.sleep(1)  # Wait a bit before powering ESC to give time to detect this as the minimum position.
     print("Please connect the battery now. Waiting for special tone indicating power supply is OK.")
     input("Press Enter after hearing the tone.")
     print("Waiting for the number of 'beep-' tones indicating battery cells.")
@@ -64,8 +64,8 @@ def arm():
 def go():
     print("Ready to increase throttle. Use '+' or '++' to increase, '-' or '--' to decrease. Type 'stop' to end.")
     pwm.start(0)  # Re-initializing PWM in case it was stopped.
-    pulses = MIN_PULSE_WIDTH  # Ensuring we start at minimum throttle.
-    set_duty_cycle(pulses)  # Apply the minimum pulse width to ensure it's properly set.
+    pulses = MIN_PULSE_WIDTH
+    set_duty_cycle(pulses)  # Apply the minimum pulse width
     try:
         while True:
             command = input("Command (+, ++, -, --, stop): ")

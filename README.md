@@ -8,12 +8,10 @@ It is likely that the project will regularly change dramatically as some things 
 
 ## Python 3.11
 
-eel  
-leaflet  
-lgpio  
+#### Flask
+#### rpi-lgpio
+#### lgpio
 
-## System
 
-Grafana  
-InfluxDB  
+
 
