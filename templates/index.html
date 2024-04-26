@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+    <title>Drone Control Interface</title>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/control">Control</a>
+        <a href="/video">Video</a>
+        <a href="/map">Map</a>
+    </div>
+    <h1>Controls</h1>
+    <button onclick="window.location.href='/calibrate'">Calibrate</button>
+    <button onclick="window.location.href='/arm'">Arm</button>
+    <button onclick="window.location.href='/stop'">Stop Motor</button>
+
+    <div class="gauge-container">
+        <div id="motor_chart_div"></div>
+        <div id="airspeed_chart_div"></div>
+    </div>
+
+
+    <div id="camera-feeds">
+        <div id="thermal-camera" style="width: 125px; height: 125px; background: grey;">Thermal Camera Feed</div>
+        <div id="video-camera" style="width: 640px; height: 360px; background: grey;">Video Camera Feed</div>
+    </div>
+</body>
+</html>
