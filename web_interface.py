@@ -22,3 +22,13 @@ motor_output_data = {
 @app.route('/data/motor-output')
 def motor_output():
     return jsonify(motor_output_data)
+
+
+@app.route('/enable-camera/<camera_type>')
+def enable_camera(camera_type):
+    return f"{camera_type} camera enabled", 200
+
+
+@app.route('/disable-camera/<camera_type>')
+def disable_camera(camera_type):
+    return f"{camera_type} camera disabled", 200

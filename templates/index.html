@@ -26,10 +26,15 @@
         <div id="airspeed_chart_div"></div>
     </div>
 
-
     <div id="camera-feeds">
-        <div id="thermal-camera" style="width: 125px; height: 125px; background: grey;">Thermal Camera Feed</div>
-        <div id="video-camera" style="width: 640px; height: 360px; background: grey;">Video Camera Feed</div>
+        <div>
+            <button onclick="toggleCamera('thermal')">Toggle Thermal Camera</button>
+            <div id="thermal-camera" style="width: 125px; height: 125px; background: grey;">Thermal Camera Feed</div>
+        </div>
+        <div>
+            <button onclick="toggleCamera('video')">Toggle Video Camera</button>
+            <div id="video-camera" style="width: 640px; height: 360px; background: grey;">Video Camera Feed</div>
+        </div>
     </div>
 </body>
 </html>

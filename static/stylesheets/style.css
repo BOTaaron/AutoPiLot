@@ -1,6 +1,6 @@
 body {
     background-color: #121212;
-    color: #fff;
+    color: #e0e0e0;
     font-family: 'Arial', sans-serif;
 }
 
@@ -22,6 +22,25 @@ body {
     background-color: #ddd;
     color: black;
 }
+button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    margin: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+button:hover, button:focus {
+    background-color: #555;
+    transform: scale(1.05);
+    outline: none;
+}
+#camera-feeds button {
+    width: 100%;
+    box-sizing: border-box;
+}
 .gauge-container {
     display: flex;
     justify-content: space-around;
@@ -38,7 +57,15 @@ body {
     justify-content: space-around;
     padding: 20px;
 }
+#camera-feeds > div {
+    margin-bottom: 20px;
+}
 
 #thermal-camera, #video-camera {
+    display: none;
+    background-color: #222;
+    color: #ccc;
     border: 1px solid #444;
+    padding: 5px;
+    text-align: center;
 }
