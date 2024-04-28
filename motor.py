@@ -1,6 +1,7 @@
 # placeholder for controlling the motor, likely to be removed/changed in the future
 import time
 from RPi import GPIO
+from flask import Blueprint
 
 
 ESC_GPIO = 23  # GPIO pin connected to the ESC signal line
@@ -21,6 +22,11 @@ def set_duty_cycle(pulse_width):
 
 
 def calibrate():
+    """
+    Calibrate the motor to set the minimum and maximum throttle range according to ESC instruction manual
+
+    Must be used the first time a new ESC/Raspberry Pi is connected
+    """
     print("Calibration Start")
 
     # 1. Move throttle stick to the top position (simulate max throttle)
@@ -47,6 +53,9 @@ def calibrate():
 
 
 def arm():
+    """
+    Arm the motor to use before launching the drone
+    """
     print("Arming ESC. Ensure throttle is at minimum.")
     # Ensuring the throttle (simulated by PWM pulse width) is at its minimum.
     set_duty_cycle(MIN_PULSE_WIDTH)
@@ -62,6 +71,9 @@ def arm():
 
 
 def go():
+    """
+    Once the drone is calibrated and armed, this function will start the motor
+    """
     print("Ready to increase throttle. Use '+' or '++' to increase, '-' or '--' to decrease. Type 'stop' to end.")
     pwm.start(0)  # Re-initializing PWM in case it was stopped.
     pulses = MIN_PULSE_WIDTH

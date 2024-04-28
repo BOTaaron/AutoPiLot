@@ -9,8 +9,24 @@ It is likely that the project will regularly change dramatically as some things 
 ## Python 3.11
 
 #### Flask
+
+Web framework used for rendering the app to control the drone
+
 #### rpi-lgpio
+
+Compatability package to provide compatibility with rpi-gpio on a Raspberry Pi 5
+
 #### lgpio
+
+Module to control the GPIO pins on the Raspberry Pi
+
+#### Sphinx 
+
+Used to create the documentation for the project
+
+#### Requests
+
+Allows HTTP requests to be sent
 
 
 

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, request, render_template, jsonify
 import time
 from threading import Thread
 
@@ -18,6 +18,7 @@ if __name__ == '__main__':
 motor_output_data = {
     'motor_output': 1200  # Replace with real motor output retrieval logic
 }
+
 
 @app.route('/data/motor-output')
 def motor_output():
