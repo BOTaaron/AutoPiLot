@@ -2,7 +2,9 @@
 
 AutoPiLot is an experimental project for university. The intention is to create a 3D printed plane that is piloted autonomously by a Raspberry Pi 5, along with a number of servos, brushless motor, IMU sensor board, and some cameras. The plane will use the GPS for location mapping and will search a target area using the thermal camera, followed by the video camera if it reads a target. 
 
-It is likely that the project will regularly change dramatically as some things work and other things don't. 
+To set up the GPS, follow the instructions at:
+
+https://ozzmaker.com/berrygps-setup-guide-raspberry-pi/
 
 # Requirements
 
@@ -27,6 +29,12 @@ Used to create the documentation for the project
 #### Requests
 
 Allows HTTP requests to be sent
+
+## System Wide Packages
+
+#### gpsd, gpsmon, cgps
+
+Used to convert NMEA GPS sentences into user readable data
 
 
 
