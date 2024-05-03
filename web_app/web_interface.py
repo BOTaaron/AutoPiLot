@@ -1,8 +1,11 @@
 from flask import Flask, request, render_template, jsonify
+from web_app.blueprints.motor.motor_routes import motor_bp
 import time
 from threading import Thread
 
 app = Flask(__name__)
+app.register_blueprint(motor_bp)
+
 
 
 @app.route('/')
@@ -12,17 +15,6 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
-
-
-# Dummy data - replace with real data retrieval logic
-motor_output_data = {
-    'motor_output': 1200  # Replace with real motor output retrieval logic
-}
-
-
-@app.route('/data/motor-output')
-def motor_output():
-    return jsonify(motor_output_data)
 
 
 @app.route('/enable-camera/<camera_type>')

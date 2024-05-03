@@ -4,8 +4,14 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
     <title>Drone Control Interface</title>
+
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/cameras.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
 
 
 </head>
@@ -17,9 +23,10 @@
         <a href="/map">Map</a>
     </div>
     <h1>Controls</h1>
-    <button onclick="window.location.href='/calibrate'">Calibrate</button>
-    <button onclick="window.location.href='/arm'">Arm</button>
-    <button onclick="window.location.href='/stop'">Stop Motor</button>
+    <button onclick="sendCommand('calibrate')">Calibrate</button>
+    <button onclick="sendCommand('arm')">Arm</button>
+    <button onclick="sendCommand('go')">Start Motor</button>
+    <button onclick="sendCommand('stop')">Stop Motor</button>
 
     <div class="gauge-container">
         <div id="motor_chart_div"></div>
