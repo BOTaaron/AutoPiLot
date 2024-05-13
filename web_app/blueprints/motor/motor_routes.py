@@ -1,10 +1,12 @@
 from flask import Blueprint, jsonify
 from .motor_controller import MotorController
 
+
 motor_bp = Blueprint('motor', __name__, url_prefix='/motor')
 
 # Create an instance of MotorController
 motor_controller = None
+
 
 def get_motor_controller():
     global motor_controller
@@ -12,6 +14,8 @@ def get_motor_controller():
         motor_controller = MotorController()
         motor_controller.setup_gpio()
     return motor_controller
+
+
 @motor_bp.route('/calibrate', methods=['POST'])
 def calibrate():
     motor = get_motor_controller()
@@ -38,4 +42,3 @@ def stop_motor():
     motor = get_motor_controller()
     motor.stop()
     return jsonify({'status': 'Motor stopped'})
-

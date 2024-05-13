@@ -30,6 +30,15 @@ Used to create the documentation for the project
 
 Allows HTTP requests to be sent
 
+#### flask-socketio
+
+Used to send commands to the Python terminal from the web app
+
+#### smbus2
+
+#### numpy
+
+
 ## System Wide Packages
 
 #### gpsd, gpsmon, cgps
