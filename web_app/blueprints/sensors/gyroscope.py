@@ -1,5 +1,6 @@
 import smbus2
 
+
 class Gyroscope:
     def __init__(self, bus_number=1, address=0x6a):
         self.bus = smbus2.SMBus(bus_number)
