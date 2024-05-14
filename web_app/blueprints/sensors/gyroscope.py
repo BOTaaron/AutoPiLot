@@ -1,86 +1,93 @@
-import smbus2
-import json
-import numpy as np
+import smbus2 as smbus
 import time
+import json
+
+# Constants for the LSM6DSL sensor gyroscope registers
+LSM6DSL_ADDRESS = 0x6A
+LSM6DSL_CTRL2_G = 0x11
+LSM6DSL_OUTX_L_G = 0x22
+LSM6DSL_OUTX_H_G = 0x23
+LSM6DSL_OUTY_L_G = 0x24
+LSM6DSL_OUTY_H_G = 0x25
+LSM6DSL_OUTZ_L_G = 0x26
+LSM6DSL_OUTZ_H_G = 0x27
+CALIBRATION_FILE = 'gyro_calibration.json'
 
 class Gyroscope:
-    def __init__(self, bus_number=1, address=0x6a, calibration_file='gyro_calibration.json'):
-        self.bus = smbus2.SMBus(bus_number)
-        self.address = address
-        self.calibration_file = calibration_file
-        self.gyro_offsets = {'x': 0, 'y': 0, 'z': 0}
-        self.setup_gyroscope()
+    def __init__(self):
+        self.bus = smbus.SMBus(1)
+        self.offsets = {'x': 0, 'y': 0, 'z': 0}
+        self.init_gyro()
         self.load_calibration()
 
-    def setup_gyroscope(self):
-        """
-        Set control register of gyroscope (CTRL2_G) and set output data rate (ODR)
-        """
-        CTRL2_G = 0x11
-        ODR_G = 0x60
-        self.bus.write_byte_data(self.address, CTRL2_G, ODR_G)
+    def init_gyro(self):
+        # ODR (Output Data Rate) = 416 Hz, 2000 dps full scale
+        self.bus.write_byte_data(LSM6DSL_ADDRESS, LSM6DSL_CTRL2_G, 0b10011100)
 
-    def read_raw_gyro(self):
+    def calibrate_gyro(self, samples=100):
         """
-        Raw data output by the gyroscope before calibration offsets are applied
-        """
-        OUTX_L_G = 0x22
-        data = self.bus.read_i2c_block_data(self.address, OUTX_L_G, 6)
-        x = (data[1] << 8) | data[0]
-        y = (data[3] << 8) | data[2]
-        z = (data[5] << 8) | data[4]
-        if x > 32767:
-            x -= 65536
-        if y > 32767:
-            y -= 65536
-        if z > 32767:
-            z -= 65536
-        return x, y, z
-
-    def calibrate_gyro(self, samples=500):
-        """
-        Calibrate the gyroscope and save result to json calibration file.
-        Calibration assumes the device is on a perfectly flat surface, not moving.
+        Calibrate gyroscope by taking average of 100 samples and averaging them
         """
         print("Calibrating gyroscope...")
-        offsets = {'x': 0, 'y': 0, 'z': 0}
+        sum_x, sum_y, sum_z = 0, 0, 0
         for _ in range(samples):
-            x, y, z = self.read_raw_gyro()
-            offsets['x'] += x
-            offsets['y'] += y
-            offsets['z'] += z
-            time.sleep(0.01)
-        self.gyro_offsets = {k: v / samples for k, v in offsets.items()}
+            x, y, z = self.read_gyro_data()
+            sum_x += x
+            sum_y += y
+            sum_z += z
+            time.sleep(0.1)
+        self.offsets['x'] = sum_x / samples
+        self.offsets['y'] = sum_y / samples
+        self.offsets['z'] = sum_z / samples
         self.save_calibration()
         print("Calibration complete.")
 
     def save_calibration(self):
         """
-        Write calibration data to json file
+        Save calibration offsets to JSON file
         """
-        with open(self.calibration_file, 'w') as f:
-            json.dump(self.gyro_offsets, f)
-        print("Calibration data saved.")
+        with open(CALIBRATION_FILE, 'w') as f:
+            json.dump(self.offsets, f)
 
     def load_calibration(self):
         """
-        Load calibration data from json file
+        Load calibration offsets from JSON file
         """
         try:
-            with open(self.calibration_file, 'r') as f:
-                self.gyro_offsets = json.load(f)
-            print("Calibration data loaded.")
+            with open(CALIBRATION_FILE, 'r') as f:
+                self.offsets = json.load(f)
+            print("Calibration loaded.")
         except FileNotFoundError:
-            print("No calibration data found. Calibrating now.")
+            print("Calibration file not found. Calibrating now.")
             self.calibrate_gyro()
 
-    def read_gyro(self):
+    def read_gyro_data(self):
         """
-        Read data from gyroscope, taking into account offsets from calibration file
+        Gets gyroscope data and returns in degrees per second.
         """
-        x, y, z = self.read_raw_gyro()
-        x -= self.gyro_offsets['x']
-        y -= self.gyro_offsets['y']
-        z -= self.gyro_offsets['z']
-        return x, y, z
+        # Read the gyro raw data (16-bit values for each axis)
+        x_low = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_L_G)
+        x_high = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTX_H_G)
+        y_low = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_L_G)
+        y_high = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTY_H_G)
+        z_low = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_L_G)
+        z_high = self.bus.read_byte_data(LSM6DSL_ADDRESS, LSM6DSL_OUTZ_H_G)
+
+        # Combine high and low bytes
+        x = x_high << 8 | x_low
+        y = y_high << 8 | y_low
+        z = z_high << 8 | z_low
+
+        # Convert to signed values
+        x = x if x < 32768 else x - 65536
+        y = y if y < 32768 else y - 65536
+        z = z if z < 32768 else z - 65536
+
+        # Convert to degrees per second
+        x_dps = x * 0.07
+        y_dps = y * 0.07
+        z_dps = z * 0.07
+
+        return x_dps, y_dps, z_dps
+
 
