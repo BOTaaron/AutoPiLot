@@ -23,16 +23,25 @@ class Accelerometer:
     def calibrate_accel(self, samples=500):
         """
         Calibrate device on each of 6 axes. May be good idea to tape Pi inside a cube and lay flat on each side.
+        Once each side is calibrated, rotate the Pi to the next side, and lay flat until calibration is complete.
         """
-        print("Calibrating accelerometer...")
-        offsets = {'x': 0, 'y': 0, 'z': 0}
-        for _ in range(samples):
-            x, y, z = self.read_raw_accelerometer()
-            offsets['x'] += x
-            offsets['y'] += y
-            offsets['z'] += z
-            time.sleep(0.01)
-        self.accelerometer_offsets = {k: v / samples for k, v in offsets.items()}
+        orientations = ["front", "back", "left", "right", "top", "bottom"]
+        for orientation in orientations:
+            input(f"Place the accelerometer with the {orientation} side facing up and press Enter to continue...")
+            offsets = {'x': 0, 'y': 0, 'z': 0}
+            for _ in range(samples):
+                x, y, z = self.read_raw_accelerometer()
+                offsets['x'] += x
+                offsets['y'] += y
+                offsets['z'] += z
+                time.sleep(0.01)
+            self.accelerometer_offsets['x'] += (offsets['x'] / samples)
+            self.accelerometer_offsets['y'] += (offsets['y'] / samples)
+            self.accelerometer_offsets['z'] += (offsets['z'] / samples)
+            print(f"Calibrated {orientation} side.")
+
+        # Average the offsets
+        self.accelerometer_offsets = {k: v / len(orientations) for k, v in self.accelerometer_offsets.items()}
         self.save_calibration()
         print("Calibration complete.")
 

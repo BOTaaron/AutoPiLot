@@ -2,6 +2,7 @@ from barometric_pressure import BarometricPressureSensor
 from magnetometer import Magnetometer
 from accelerometer import Accelerometer
 from gyroscope import Gyroscope
+from gps_sensor import GPS
 
 class SensorController:
     def __init__(self):
