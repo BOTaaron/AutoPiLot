@@ -4,8 +4,9 @@ import math
 import json
 import numpy as np
 
+
 class LIS3MDL:
-    def __init__(self, i2c_bus=1, address=0x1C, calibration_file='calibration.json'):
+    def __init__(self, i2c_bus=1, address=0x1C, calibration_file='magnetometer_calibration.json'):
         self.bus = smbus2.SMBus(i2c_bus)
         self.address = address
         self.sensitivity = 6842  # Sensitivity for FS=4 gauss
@@ -38,7 +39,8 @@ class LIS3MDL:
 
     def calibrate(self, samples=500):
         """
-        Calibrate sensor using number of samples from samples parameter
+        Calibrate sensor using number of samples from samples parameter.
+        Rotate the Pi along all three axes in a slow figure of eight. Pitch, roll, and yaw.
         """
         print("Starting calibration...")
         max_vals, min_vals = {'x': -np.inf, 'y': -np.inf, 'z': -np.inf}, {'x': np.inf, 'y': np.inf, 'z': np.inf}
@@ -78,6 +80,7 @@ class LIS3MDL:
         heading = math.atan2(y, x)
         heading_degrees = math.degrees(heading)
         return heading_degrees + 360 if heading_degrees < 0 else heading_degrees
+
 
 # output data for testing
 if __name__ == '__main__':
