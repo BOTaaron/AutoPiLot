@@ -2,6 +2,7 @@ import smbus2
 import json
 import time
 
+
 class Accelerometer:
     def __init__(self, bus_number=1, address=0x6a, calibration_file='accelerometer_calibration.json'):
         self.bus = smbus2.SMBus(bus_number)
@@ -9,7 +10,7 @@ class Accelerometer:
         self.calibration_file = calibration_file
         self.accelerometer_offsets = {'x': 0, 'y': 0, 'z': 0}
         self.setup_accelerometer()
-        self.load_calibration
+        self.load_calibration()
 
     def setup_accelerometer(self):
         """

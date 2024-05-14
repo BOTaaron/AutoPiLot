@@ -5,7 +5,7 @@ import json
 import numpy as np
 
 
-class LIS3MDL:
+class Magnetometer:
     def __init__(self, i2c_bus=1, address=0x1C, calibration_file='magnetometer_calibration.json'):
         self.bus = smbus2.SMBus(i2c_bus)
         self.address = address
@@ -84,7 +84,7 @@ class LIS3MDL:
 
 # output data for testing
 if __name__ == '__main__':
-    lis3mdl = LIS3MDL()
+    lis3mdl = Magnetometer()
     while True:
         x, y, z = lis3mdl.read_magnetometer()
         print(f"Magnetic Field in X: {x}, Y: {y}, Z: {z}")

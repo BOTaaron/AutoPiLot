@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import smbus2 as smbus
-import math
 import time
 
 # define BMP388 Device I2C address
@@ -64,7 +63,7 @@ BMP388_REG_ADD_P10 = 0x44
 BMP388_REG_ADD_P11 = 0x45
 
 
-class BMP388(object):
+class BarometricPressureSensor(object):
     """
     Code used from BerryGPS repository at https://github.com/ozzmaker/BerryIMU/blob/master/python-pressure-sensor-BMP280-BMP388/bmp388.py
     Used to read data from BMP388 and return temperature, pressure, and altitude.
@@ -166,13 +165,13 @@ class BMP388(object):
         partial_data5 = self.P7 * partial_data1 * 0x10
         partial_data6 = self.P6 * self.T_fine * 4194304
         offset = self.P5 * 140737488355328 + partial_data4 \
-                 + partial_data5 + partial_data6
+            + partial_data5 + partial_data6
 
         partial_data2 = self.P4 * partial_data3 / 0x20
         partial_data4 = self.P3 * partial_data1 * 0x04
         partial_data5 = (self.P2 - 16384) * self.T_fine * 2097152
         sensitivity = (self.P1 - 16384) * 70368744177664 \
-                      + partial_data2 + partial_data4 + partial_data5
+            + partial_data2 + partial_data4 + partial_data5
 
         partial_data1 = sensitivity / 16777216 * adc_P
         partial_data2 = self.P10 * self.T_fine
@@ -183,7 +182,7 @@ class BMP388(object):
         partial_data2 = self.P11 * partial_data6 / 65536
         partial_data3 = partial_data2 * adc_P / 128
         partial_data4 = offset / 0x04 + partial_data1 + partial_data5 \
-                        + partial_data3
+            + partial_data3
         comp_press = partial_data4 * 25 / 1099511627776
         return comp_press
 
@@ -203,4 +202,5 @@ class BMP388(object):
         pressure = self.compensate_pressure(adc_P) / 100
         altitude = 4433000 * (0x01 - pow(pressure / 101325.0, 0.1903))
 
-        return (temperature, pressure, altitude)
+        return temperature, pressure, altitude
+
