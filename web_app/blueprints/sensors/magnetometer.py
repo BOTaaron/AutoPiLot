@@ -1,93 +1,94 @@
-import smbus2
+import smbus2 as smbus
 import time
-import math
 import json
-import numpy as np
+import math
+import sys
+
+# Constants for the LIS3MDL sensor magnetometer registers
+LIS3MDL_ADDRESS = 0x1C
+LIS3MDL_CTRL_REG1 = 0x20
+LIS3MDL_CTRL_REG2 = 0x21
+LIS3MDL_CTRL_REG3 = 0x22
+LIS3MDL_CTRL_REG4 = 0x23
+LIS3MDL_OUT_X_L = 0x28
+LIS3MDL_OUT_X_H = 0x29
+LIS3MDL_OUT_Y_L = 0x2A
+LIS3MDL_OUT_Y_H = 0x2B
+LIS3MDL_OUT_Z_L = 0x2C
+LIS3MDL_OUT_Z_H = 0x2D
+CALIBRATION_FILE = 'magnetometer_calibration.json'
 
 
 class Magnetometer:
-    def __init__(self, i2c_bus=1, address=0x1C, calibration_file='magnetometer_calibration.json'):
-        self.bus = smbus2.SMBus(i2c_bus)
-        self.address = address
-        self.sensitivity = 6842  # Sensitivity for FS=4 gauss
-        self.calibration_file = calibration_file
-        self.offsets = {'x': 0, 'y': 0, 'z': 0}
+    def __init__(self):
+        self.bus = smbus.SMBus(1)
         self.init_magnetometer()
+        self.mag_min = [32767, 32767, 32767]
+        self.mag_max = [-32768, -32768, -32768]
         self.load_calibration()
 
     def init_magnetometer(self):
-        if self.bus.read_byte_data(self.address, 0x0F) != 0x3D:
-            raise RuntimeError("LIS3MDL not found")
-        self.bus.write_byte_data(self.address, 0x20, 0x70)  # Ultra-high-performance mode for X and Y, 80 Hz ODR
-        self.bus.write_byte_data(self.address, 0x21, 0x00)  # +/-4 gauss
-        self.bus.write_byte_data(self.address, 0x22, 0x00)  # Continuous-conversion mode
-        self.bus.write_byte_data(self.address, 0x23, 0x0C)  # Ultra-high-performance mode for Z
+        # Initialize the magnetometer
+        self.bus.write_byte_data(LIS3MDL_ADDRESS, LIS3MDL_CTRL_REG1, 0b11011100)  # High performance, 80 Hz, Temp sensor enabled
+        self.bus.write_byte_data(LIS3MDL_ADDRESS, LIS3MDL_CTRL_REG2, 0b00100000)  # ±8 gauss
+        self.bus.write_byte_data(LIS3MDL_ADDRESS, LIS3MDL_CTRL_REG3, 0x00)  # Continuous-conversion mode
 
-    def read_magnetometer(self):
-        x = self.read_axis(0x28, 0x29) - self.offsets['x']
-        y = self.read_axis(0x2A, 0x2B) - self.offsets['y']
-        z = self.read_axis(0x2C, 0x2D) - self.offsets['z']
-        return x / self.sensitivity, y / self.sensitivity, z / self.sensitivity
+    def read_magnetometer_data(self):
+        x = self.read_data(LIS3MDL_OUT_X_L, LIS3MDL_OUT_X_H)
+        y = self.read_data(LIS3MDL_OUT_Y_L, LIS3MDL_OUT_Y_H)
+        z = self.read_data(LIS3MDL_OUT_Z_L, LIS3MDL_OUT_Z_H)
+        return x * 0.29, y * 0.29, z * 0.29
 
-    def read_axis(self, lsb_addr, msb_addr):
-        lsb = self.bus.read_byte_data(self.address, lsb_addr)
-        msb = self.bus.read_byte_data(self.address, msb_addr)
-        value = msb << 8 | lsb
-        if value > 32767:
-            value -= 65536
-        return value
+    def read_data(self, out_l, out_h):
+        low = self.bus.read_byte_data(LIS3MDL_ADDRESS, out_l)
+        high = self.bus.read_byte_data(LIS3MDL_ADDRESS, out_h)
+        value = high << 8 | low
+        return value if value < 32768 else value - 65536
 
-    def calibrate(self, samples=500):
-        """
-        Calibrate sensor using number of samples from samples parameter.
-        Rotate the Pi along all three axes in a slow figure of eight. Pitch, roll, and yaw.
-        """
-        print("Starting calibration...")
-        max_vals, min_vals = {'x': -np.inf, 'y': -np.inf, 'z': -np.inf}, {'x': np.inf, 'y': np.inf, 'z': np.inf}
-        for _ in range(samples):
-            x, y, z = self.read_magnetometer() * self.sensitivity
-            max_vals['x'], min_vals['x'] = max(max_vals['x'], x), min(min_vals['x'], x)
-            max_vals['y'], min_vals['y'] = max(max_vals['y'], y), min(min_vals['y'], y)
-            max_vals['z'], min_vals['z'] = max(max_vals['z'], z), min(min_vals['z'], z)
-            time.sleep(0.02)
-        self.offsets = {axis: (max_vals[axis] + min_vals[axis]) / 2 for axis in 'xyz'}
-        self.save_calibration()
+    def calibrate(self):
+        print("Rotate the magnetometer in all directions")
+        try:
+            while True:
+                x, y, z = self.read_magnetometer_data()
+                self.mag_min = [min(self.mag_min[i], v) for i, v in enumerate([x, y, z])]
+                self.mag_max = [max(self.mag_max[i], v) for i, v in enumerate([x, y, z])]
+                print(f"Min: {self.mag_min}, Max: {self.mag_max}")
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            self.save_calibration()
 
     def save_calibration(self):
-        """
-        Save calibration data to json file
-        """
-        with open(self.calibration_file, 'w') as f:
-            json.dump(self.offsets, f)
-        print("Calibration saved")
+        calibration_data = {'min': self.mag_min, 'max': self.mag_max}
+        with open(CALIBRATION_FILE, 'w') as f:
+            json.dump(calibration_data, f)
+        print("Calibration data saved.")
 
     def load_calibration(self):
-        """
-        Load calibration data from json file
-        """
         try:
-            with open(self.calibration_file, 'r') as f:
-                self.offsets = json.load(f)
-            print("Calibration loaded")
+            with open(CALIBRATION_FILE, 'r') as f:
+                calibration_data = json.load(f)
+                self.mag_min = calibration_data['min']
+                self.mag_max = calibration_data['max']
+                print("Calibration data loaded.")
         except FileNotFoundError:
-            print("No calibration file found. Please calibrate before proceeding.")
-            self.calibrate()
+            print("Calibration file not found. Please calibrate the magnetometer.")
 
-    def calculate_heading(self, x, y):
-        """
-        Calculate heading of drone in degrees
-        """
-        heading = math.atan2(y, x)
+    def heading(self):
+        x, y, z = self.read_magnetometer_data()
+        heading = math.atan2(x, y)
+        if heading < 0:
+            heading += 2 * math.pi
         heading_degrees = math.degrees(heading)
-        return heading_degrees + 360 if heading_degrees < 0 else heading_degrees
+        return heading_degrees
 
 
-# output data for testing
-if __name__ == '__main__':
-    lis3mdl = Magnetometer()
+if __name__ == "__main__":
+    mag = Magnetometer()
+
+    #mag.calibrate()
     while True:
-        x, y, z = lis3mdl.read_magnetometer()
-        print(f"Magnetic Field in X: {x}, Y: {y}, Z: {z}")
-        heading = lis3mdl.calculate_heading(x, y)
-        print(f"Heading: {heading} degrees")
+        x, y, z = mag.read_magnetometer_data()
+        heading = mag.heading()
+        print(heading)
+        #print(f"X: {x}, Y: {y}, Z: {z}")
         time.sleep(1)
