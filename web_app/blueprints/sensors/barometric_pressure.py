@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import smbus2 as smbus
 import time
 
@@ -77,7 +74,7 @@ class BarometricPressureSensor(object):
         # Load calibration values.
 
         if self._read_byte(BMP388_REG_ADD_WIA) == BMP388_REG_VAL_WIA:
-            print("Pressure sersor is BMP388!\r\n")
+            print("Pressure sensor is BMP388!\r\n")
             u8RegData = self._read_byte(BMP388_REG_ADD_STATUS)
             if u8RegData & BMP388_REG_VAL_CMD_RDY:
                 self._write_byte(BMP388_REG_ADD_CMD,
@@ -202,5 +199,4 @@ class BarometricPressureSensor(object):
         pressure = self.compensate_pressure(adc_P) / 100
         altitude = 4433000 * (0x01 - pow(pressure / 101325.0, 0.1903))
 
-        return temperature, pressure, altitude
-
+        return temperature / 100, pressure / 100, altitude / 100

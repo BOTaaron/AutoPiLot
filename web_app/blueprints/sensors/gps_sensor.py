@@ -20,7 +20,4 @@ class GPS:
             print(f"Error reading GPS data: {e}")
             return None
 
-gps = GPS()
 
-data = gps.get_gps_data()
-print(data)

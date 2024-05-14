@@ -84,7 +84,3 @@ class Gyroscope:
         z -= self.gyro_offsets['z']
         return x, y, z
 
-
-gyro = Gyroscope()
-gyroscope_data = gyro.read_gyro()
-print("Gyro data:", gyroscope_data)
