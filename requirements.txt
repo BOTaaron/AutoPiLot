@@ -39,3 +39,6 @@ wsproto==1.2.0
 smbus2~=0.4.3
 numpy~=1.26.4
 opencv-python~=4.9.0.80
+pillow~=10.3.0
+picamera2~=0.3.18
+MLX90640~=0.0.2

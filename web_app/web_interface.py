@@ -34,8 +34,5 @@ def process_command(command):
         socketio.emit('console_output', 'Unknown command')
 
 
-
-
-
 if __name__ == '__main__': # http://aaron.local:5000/ to view page
     socketio.run(app, host='0.0.0.0', port=5000, debug=True, use_reloader=False, allow_unsafe_werkzeug=True)

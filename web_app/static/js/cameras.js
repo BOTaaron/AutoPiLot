@@ -14,6 +14,18 @@ function toggleCamera(cameraType) {
         cameraUrl = '/camera/video_feed';
     }
 
+    const img = cameraDiv.querySelector('img')
+
+    if (cameraDiv.style.display === 'none' || !cameraDiv.style.display) {
+        cameraDiv.style.display = 'block';
+        img.src = cameraUrl;
+    } else {
+        cameraDiv.style.display = 'none';
+        img.src = '';
+    }
+}
+
+    /*
     if (cameraDiv.style.display === 'none' || !cameraDiv.style.display) {
         cameraDiv.style.display = 'block';
         if (!cameraDiv.querySelector('img')) {
@@ -34,6 +46,7 @@ function toggleCamera(cameraType) {
         }
     }
 }
+*/
 
 function updateThermalFeed(cameraDiv, cameraUrl) {
     let img = cameraDiv.querySelector('img');
