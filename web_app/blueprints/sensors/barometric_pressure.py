@@ -74,7 +74,6 @@ class BarometricPressureSensor(object):
         # Load calibration values.
 
         if self._read_byte(BMP388_REG_ADD_WIA) == BMP388_REG_VAL_WIA:
-            print("Pressure sensor is BMP388!\r\n")
             u8RegData = self._read_byte(BMP388_REG_ADD_STATUS)
             if u8RegData & BMP388_REG_VAL_CMD_RDY:
                 self._write_byte(BMP388_REG_ADD_CMD,

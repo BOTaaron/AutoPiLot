@@ -1,12 +1,17 @@
+import os
 from flask import Flask, render_template
-from flask_socketio import SocketIO
-from web_app.blueprints.motor.motor_routes import motor_bp
-import time
-from threading import Thread
+from extensions import socketio
+from web_app.routes.motor_routes import motor_bp
+from web_app.routes.camera_routes import camera_bp
+from web_app.routes.data_routes import data_bp
+from web_app.blueprints.motor.motor_manager import get_motor_controller
 
 app = Flask(__name__)
 app.register_blueprint(motor_bp)
-socketio = SocketIO(app)
+app.register_blueprint(camera_bp)
+app.register_blueprint(data_bp)
+socketio.init_app(app, async_mode='threading')
+motor = get_motor_controller()
 
 
 @app.route('/')
@@ -16,23 +21,21 @@ def index():
 
 @socketio.on('console_input')
 def handle_input(message):
-    # Here you can decide what to do with the received message
     print('Received command:', message)
-    process_command(message)  # Custom function to process command
+    process_command(message)
 
 
 def process_command(command):
-    # Dummy implementation to illustrate response
+    # Calibrates the motor
     if command == 'calibrate':
-        calibrate()
+        motor.calibrate()
         socketio.emit('console_output', 'Calibration started')
+    else:
+        socketio.emit('console_output', 'Unknown command')
 
 
-# Example function that might interact with your motor controller
-def calibrate():
-    # This should be replaced with the actual calibration function call
-    socketio.emit('console_output', 'Calibration complete')
 
 
-if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000, allow_unsafe_werkzeug=True)
+
+if __name__ == '__main__': # http://aaron.local:5000/ to view page
+    socketio.run(app, host='0.0.0.0', port=5000, debug=True, use_reloader=False, allow_unsafe_werkzeug=True)

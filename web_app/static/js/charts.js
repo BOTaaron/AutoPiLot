@@ -29,32 +29,35 @@ function drawChart() {
     // draw the chart with default values
     motorChart.draw(motorData, motorOptions);
 
-    let airspeedData = google.visualization.arrayToDataTable([
+    let airSpeedData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
         ['Speed', 0], // Initial value set to 0
     ]);
-    let airspeedOptions = {
+    let airSpeedOptions = {
         width: 500, height: 200,
         redFrom: 60, redTo: 70,  // red zone starts at 60 MPH up to 70 MPH
         yellowFrom:45, yellowTo: 60, // yellow zone from 45 MPH to 60 MPH
         minorTicks: 5,
         max: 70  // Maximum value for the air speed dial
     };
-    let airspeedChart = new google.visualization.Gauge(document.getElementById('airspeed_chart_div'));
-    airspeedChart.draw(airspeedData, airspeedOptions);
+    let airSpeedChart = new google.visualization.Gauge(document.getElementById('airspeed_chart_div'));
+    airSpeedChart.draw(airSpeedData, airSpeedOptions);
 
     // Update motor output periodically
-    setInterval(() => updateGauges(motorData, motorChart, motorOptions, airspeedData, airspeedChart), 1000);
+    setInterval(() => updateGauges(motorData, motorChart, motorOptions, airSpeedData, airSpeedChart), 1000);
 
 }
 
-function updateGauges(motorData, motorChart, motorOptions, airspeedData, airspeedChart) {
-    fetch('/motor/output')
+function updateGauges(motorData, motorChart, motorOptions) {
+    fetch('/data/motor_output')
     .then(response => response.json())
     .then(data => {
         motorData.setValue(0, 1, data.motor_output);
         motorChart.draw(motorData, motorOptions);
-        airspeedData.setValue(0, 1, data.air_speed); // Assume air_speed is also provided
-        airspeedChart.draw(airspeedData, airspeedOptions);
-    });
+
+
+    })
+    .catch(error => console.error('Error fetching output'));
 }
+
+

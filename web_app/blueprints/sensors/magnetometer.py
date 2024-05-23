@@ -2,7 +2,7 @@ import smbus2 as smbus
 import time
 import json
 import math
-import sys
+import os
 
 # Constants for the LIS3MDL sensor magnetometer registers
 LIS3MDL_ADDRESS = 0x1C
@@ -16,7 +16,7 @@ LIS3MDL_OUT_Y_L = 0x2A
 LIS3MDL_OUT_Y_H = 0x2B
 LIS3MDL_OUT_Z_L = 0x2C
 LIS3MDL_OUT_Z_H = 0x2D
-CALIBRATION_FILE = 'magnetometer_calibration.json'
+CALIBRATION_FILE = os.path.join(os.path.dirname(__file__), 'magnetometer_calibration.json')
 
 
 class Magnetometer:
@@ -82,7 +82,7 @@ class Magnetometer:
         return heading_degrees
 
 
-if __name__ == "__main__":
+"""if __name__ == "__main__":
     mag = Magnetometer()
 
     #mag.calibrate()
@@ -91,4 +91,4 @@ if __name__ == "__main__":
         heading = mag.heading()
         print(heading)
         #print(f"X: {x}, Y: {y}, Z: {z}")
-        time.sleep(1)
+        time.sleep(1)"""

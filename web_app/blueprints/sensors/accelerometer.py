@@ -1,6 +1,7 @@
 import smbus2
 import time
 import json
+import os
 
 
 class Accelerometer:
@@ -19,12 +20,12 @@ class Accelerometer:
     LSM6DSL_OUTY_H_XL = 0x2B
     LSM6DSL_OUTZ_L_XL = 0x2C
     LSM6DSL_OUTZ_H_XL = 0x2D
-    CALIBRATION_FILE = 'accelerometer_calibration.json'
+    CALIBRATION_FILE = os.path.join(os.path.dirname(__file__), 'accelerometer_calibration.json')
 
     def __init__(self):
         self.bus = smbus2.SMBus(1)
         if not self.init_imu():
-            raise Exception("Failed to initialize the LSM6DSL IMU")
+            raise Exception("Failed to initialize LSM6DSL")
         self.offsets = self.load_calibration()
 
     def write_byte(self, register, value):
@@ -90,7 +91,7 @@ class Accelerometer:
                 return json.load(f)
         except FileNotFoundError:
             print("No calibration file found. Calibrating now.")
-            return self.calibrate_accel()
+            return None
 
     def get_acceleration_data(self):
         """

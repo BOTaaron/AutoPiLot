@@ -1,6 +1,7 @@
 import smbus2 as smbus
 import time
 import json
+import os
 
 # Constants for the LSM6DSL sensor gyroscope registers
 LSM6DSL_ADDRESS = 0x6A
@@ -11,7 +12,7 @@ LSM6DSL_OUTY_L_G = 0x24
 LSM6DSL_OUTY_H_G = 0x25
 LSM6DSL_OUTZ_L_G = 0x26
 LSM6DSL_OUTZ_H_G = 0x27
-CALIBRATION_FILE = 'gyro_calibration.json'
+CALIBRATION_FILE = os.path.join(os.path.dirname(__file__), 'gyro_calibration.json')
 
 class Gyroscope:
     def __init__(self):
