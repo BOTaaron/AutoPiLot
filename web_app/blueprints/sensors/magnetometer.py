@@ -34,6 +34,9 @@ class Magnetometer:
         self.bus.write_byte_data(LIS3MDL_ADDRESS, LIS3MDL_CTRL_REG3, 0x00)  # Continuous-conversion mode
 
     def read_magnetometer_data(self):
+        """
+        Returns data in milligauss
+        """
         x = self.read_data(LIS3MDL_OUT_X_L, LIS3MDL_OUT_X_H)
         y = self.read_data(LIS3MDL_OUT_Y_L, LIS3MDL_OUT_Y_H)
         z = self.read_data(LIS3MDL_OUT_Z_L, LIS3MDL_OUT_Z_H)

@@ -12,14 +12,35 @@ function sendCommand(command) {
 // Set up and display the gauges
 function drawChart() {
     // Motor data
+        const commonGaugeOptions = {
+        width: 200, height: 200,
+        redFrom: 80, redTo: 100,
+        yellowFrom: 60, yellowTo: 80,
+        minorTicks: 5,
+        majorTicks: ['0', '20', '40', '60', '80', '100'],
+        max: 100,
+        animation: { duration: 500, easing: 'inAndOut' },
+        greenColor: '#00ff00',
+        yellowColor: '#ffff00',
+        redColor: '#ff0000',
+        backgroundColor: { fill: '#2e2e2e' },
+        fontName: 'Roboto',
+        textStyle: {
+            color: '#ffffff'
+        },
+        titleTextStyle: {
+            color: '#ffffff'
+        }
+    };
+
     let motorData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
         ['Motor', 0],
     ]);
     let motorOptions = {
-        width: 500, height: 200,
-        redFrom: 1800, redTo: 2000,
-        yellowFrom:1500, yellowTo: 1800,
+        ...commonGaugeOptions,
+        redFrom: 80, redTo: 100,
+        yellowFrom:50, yellowTo: 80,
         minorTicks: 5
     };
     let motorChart = new google.visualization.Gauge(document.getElementById('motor_chart_div'));
@@ -31,7 +52,7 @@ function drawChart() {
         ['Speed', 0],
     ]);
     let airSpeedOptions = {
-        width: 500, height: 200,
+        ...commonGaugeOptions,
         redFrom: 60, redTo: 70,
         yellowFrom:45, yellowTo: 60,
         minorTicks: 5,
@@ -46,7 +67,7 @@ function drawChart() {
         ['Temp', 0],
     ]);
     let temperatureOptions = {
-        width: 500, height: 200,
+        ...commonGaugeOptions,
         redFrom: 80, redTo: 100,
         yellowFrom:60, yellowTo: 80,
         minorTicks: 5,
@@ -61,6 +82,7 @@ function drawChart() {
         ['Pressure', 0],
     ]);
     let pressureOptions = {
+        ...commonGaugeOptions,
         width: 500, height: 200,
         redFrom: 1100, redTo: 1200,
         yellowFrom: 900, yellowTo: 1100,
@@ -77,10 +99,16 @@ function drawChart() {
     altitudeData.addRow([new Date(), 0]); // Initial row
     let altitudeOptions = {
         width: 500, height: 200,
-        hAxis: {title: 'Time'},
-        vAxis: {title: 'Altitude (m)'},
-        legend: { position: 'bottom' },
-        curveType: 'function'
+        backgroundColor: '#2e2e2e',
+        hAxis: {title: 'Time', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
+        vAxis: {title: 'Altitude (m)', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
+        legend: { position: 'bottom', textStyle: {color: '#ffffff'} },
+        curveType: 'function',
+        colors: ['#00ff00'],
+        fontName: 'Roboto',
+        titleTextStyle: {
+            color: '#ffffff'
+        }
     };
     let altitudeChart = new google.visualization.LineChart(document.getElementById('altitude_chart_div'));
     altitudeChart.draw(altitudeData, altitudeOptions);
