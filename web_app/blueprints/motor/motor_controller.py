@@ -122,5 +122,4 @@ class MotorController:
 
     def get_motor_data(self):
         percentage_output = (self.current_pulse_width - self.MIN_PULSE_WIDTH) / (self.MAX_PULSE_WIDTH - self.MIN_PULSE_WIDTH) * 100
-        print(percentage_output)
         return percentage_output

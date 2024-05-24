@@ -1,5 +1,4 @@
-// load Google Charts with guage and corechart to display drone data
-
+// Load Google Charts with gauge and corechart to display drone data
 google.charts.load('current', {'packages':['gauge', 'corechart']});
 google.charts.setOnLoadCallback(drawChart);
 
@@ -10,54 +9,130 @@ function sendCommand(command) {
     .catch(error => console.error('Error:', error));
 }
 
-// set up and display the gauge
+// Set up and display the gauges
 function drawChart() {
-    // table containing the data for the gauge
+    // Motor data
     let motorData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
         ['Motor', 0],
     ]);
-    // options for the gauge for size, range of colours, and ticks between major ticks
     let motorOptions = {
         width: 500, height: 200,
         redFrom: 1800, redTo: 2000,
         yellowFrom:1500, yellowTo: 1800,
         minorTicks: 5
     };
-    // creates a new chart inside element ID of 'motor_chart_div'
     let motorChart = new google.visualization.Gauge(document.getElementById('motor_chart_div'));
-    // draw the chart with default values
     motorChart.draw(motorData, motorOptions);
 
+    // Airspeed data
     let airSpeedData = google.visualization.arrayToDataTable([
         ['Label', 'Value'],
-        ['Speed', 0], // Initial value set to 0
+        ['Speed', 0],
     ]);
     let airSpeedOptions = {
         width: 500, height: 200,
-        redFrom: 60, redTo: 70,  // red zone starts at 60 MPH up to 70 MPH
-        yellowFrom:45, yellowTo: 60, // yellow zone from 45 MPH to 60 MPH
+        redFrom: 60, redTo: 70,
+        yellowFrom:45, yellowTo: 60,
         minorTicks: 5,
-        max: 70  // Maximum value for the air speed dial
+        max: 70
     };
     let airSpeedChart = new google.visualization.Gauge(document.getElementById('airspeed_chart_div'));
     airSpeedChart.draw(airSpeedData, airSpeedOptions);
 
-    // Update motor output periodically
-    setInterval(() => updateGauges(motorData, motorChart, motorOptions, airSpeedData, airSpeedChart), 1000);
+    // Temperature data
+    let temperatureData = google.visualization.arrayToDataTable([
+        ['Label', 'Value'],
+        ['Temp', 0],
+    ]);
+    let temperatureOptions = {
+        width: 500, height: 200,
+        redFrom: 80, redTo: 100,
+        yellowFrom:60, yellowTo: 80,
+        minorTicks: 5,
+        max: 100
+    };
+    let temperatureChart = new google.visualization.Gauge(document.getElementById('temperature_chart_div'));
+    temperatureChart.draw(temperatureData, temperatureOptions);
 
+    // Barometric pressure data
+    let pressureData = google.visualization.arrayToDataTable([
+        ['Label', 'Value'],
+        ['Pressure', 0],
+    ]);
+    let pressureOptions = {
+        width: 500, height: 200,
+        redFrom: 1100, redTo: 1200,
+        yellowFrom: 900, yellowTo: 1100,
+        minorTicks: 5,
+        max: 1200
+    };
+    let pressureChart = new google.visualization.Gauge(document.getElementById('barometric_pressure_div'));
+    pressureChart.draw(pressureData, pressureOptions);
+
+    // Altitude data
+    let altitudeData = new google.visualization.DataTable();
+    altitudeData.addColumn('datetime', 'Time');
+    altitudeData.addColumn('number', 'Altitude');
+    altitudeData.addRow([new Date(), 0]); // Initial row
+    let altitudeOptions = {
+        width: 500, height: 200,
+        hAxis: {title: 'Time'},
+        vAxis: {title: 'Altitude (m)'},
+        legend: { position: 'bottom' },
+        curveType: 'function'
+    };
+    let altitudeChart = new google.visualization.LineChart(document.getElementById('altitude_chart_div'));
+    altitudeChart.draw(altitudeData, altitudeOptions);
+
+    // Update all gauges and charts periodically
+    setInterval(() => updateGauges(
+        motorData, motorChart, motorOptions,
+        airSpeedData, airSpeedChart, airSpeedOptions,
+        temperatureData, temperatureChart, temperatureOptions,
+        pressureData, pressureChart, pressureOptions,
+        altitudeData, altitudeChart, altitudeOptions
+    ), 1000);
 }
 
-function updateGauges(motorData, motorChart, motorOptions) {
+function updateGauges(
+    motorData, motorChart, motorOptions,
+    airSpeedData, airSpeedChart, airSpeedOptions,
+    temperatureData, temperatureChart, temperatureOptions,
+    pressureData, pressureChart, pressureOptions,
+    altitudeData, altitudeChart, altitudeOptions
+) {
+    // Update motor output
     fetch('/data/motor_output')
     .then(response => response.json())
     .then(data => {
-        motorData.setValue(0, 1, data.motor_output);
+        motorData.setValue(0, 1, parseFloat(data.motor_output));
         motorChart.draw(motorData, motorOptions);
-
-
     })
-    .catch(error => console.error('Error fetching output'));
+    .catch(error => console.error('Error fetching motor output'));
+
+    // Update barometric data
+    fetch('/data/barometric')
+    .then(response => response.json())
+    .then(data => {
+        let temperature = parseFloat(data.temperature);
+        let pressure = parseFloat(data.pressure);
+        let altitude = parseFloat(data.altitude);
+
+        // Set temperature data
+        temperatureData.setValue(0, 1, temperature);
+
+        // Set pressure data
+        pressureData.setValue(0, 1, pressure);
+
+        // Update altitude chart
+        const currentTime = new Date();
+        altitudeData.addRow([currentTime, altitude]);
+
+        // Redraw charts
+        temperatureChart.draw(temperatureData, temperatureOptions);
+        pressureChart.draw(pressureData, pressureOptions);
+        altitudeChart.draw(altitudeData, altitudeOptions);
+    })
+    .catch(error => console.error('Error fetching barometric data'));
 }
-
-

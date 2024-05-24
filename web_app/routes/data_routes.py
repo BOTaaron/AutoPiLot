@@ -29,7 +29,13 @@ def get_barometric_data():
     """
     get data from the barometric pressure sensor to display on the web page
     """
-    return jsonify(controller.get_barometric_data())
+    temperature, pressure, altitude = controller.get_barometric_data()
+    print(altitude)
+    return jsonify({
+        'temperature': temperature,
+        'pressure': pressure,
+        'altitude': altitude
+    })
 
 
 @data_bp.route('/gyroscope')

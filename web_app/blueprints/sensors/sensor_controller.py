@@ -26,8 +26,9 @@ class SensorController:
         """
         Get data in the form of Celsius (temperature), hPa (pressure), metres (altitude)
         """
+
         temperature, pressure, altitude = self.barometric.get_temperature_and_pressure_and_altitude()
-        return {"barometric": {"temperature: ": temperature, "pressure: ": pressure, "altitude: ": altitude}}
+        return temperature, pressure, altitude
 
     def get_gyroscope_data(self):
         """
