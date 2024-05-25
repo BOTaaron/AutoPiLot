@@ -45,7 +45,7 @@ class KalmanFilterOrientation:
 
     def update_orientation(self, acc, gyr, mag):
         """
-        Update the orientation estimate using the accelerometer, gyroscope, and magnetometer 
+        Update the orientation estimate using the accelerometer, gyroscope, and magnetometer
 
         Parameters:
         acc (numpy.ndarray): Accelerometer data (3 elements: x, y, z).
