@@ -42,3 +42,4 @@ opencv-python~=4.9.0.80
 pillow~=10.3.0
 picamera2~=0.3.18
 MLX90640~=0.0.2
+AHRS~=0.3.1

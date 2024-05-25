@@ -76,13 +76,6 @@ class Magnetometer:
         except FileNotFoundError:
             print("Calibration file not found. Please calibrate the magnetometer.")
 
-    def heading(self):
-        x, y, z = self.read_magnetometer_data()
-        heading = math.atan2(x, y)
-        if heading < 0:
-            heading += 2 * math.pi
-        heading_degrees = math.degrees(heading)
-        return heading_degrees
 
 
 """if __name__ == "__main__":
