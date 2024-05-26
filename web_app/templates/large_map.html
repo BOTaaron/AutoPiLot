@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
+    <title>Drone Control Interface</title>
+
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/control">Control</a>
+        <a href="/video">Video</a>
+        <a href="/large_map">Map</a>
+    </div>
+
+    <div id="full-map"></div>
+</body>
+</html>

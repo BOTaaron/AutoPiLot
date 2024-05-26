@@ -10,16 +10,16 @@
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <script src="{{ url_for('static', filename='js/cameras.js') }}"></script>
     <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
-
-
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
 </head>
 <body>
     <div class="navbar">
         <a href="/">Home</a>
         <a href="/control">Control</a>
         <a href="/video">Video</a>
-        <a href="/map">Map</a>
+        <a href="/large_map">Map</a>
     </div>
     <h1>Controls</h1>
     <button onclick="sendCommand('calibrate')">Calibrate</button>
@@ -40,6 +40,11 @@
         <div id="temperature_chart_div"></div>
         <div id="altitude_chart_div"></div>
         <div id="barometric_pressure_div"></div>
+    </div>
+
+    <div id="map-container">
+        <h1>Map</h1>
+        <div id="small-map"></div>
     </div>
 
     <div id="camera-feeds">

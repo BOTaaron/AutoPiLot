@@ -5,7 +5,7 @@ from web_app.blueprints.motor.motor_manager import get_motor_controller
 data_bp = Blueprint('data', __name__, url_prefix='/data')
 controller = SensorController()
 motor_controller = get_motor_controller()
-
+dummy_coordinates = {'lat': 53.82, 'lon': -1.570}
 
 @data_bp.route('/motor_output', methods=['GET'])
 def motor_output():
@@ -30,7 +30,6 @@ def get_barometric_data():
     get data from the barometric pressure sensor to display on the web page
     """
     temperature, pressure, altitude = controller.get_barometric_data()
-    print(altitude)
     return jsonify({
         'temperature': temperature,
         'pressure': pressure,
@@ -44,3 +43,8 @@ def get_gyroscope_data():
     get data from the gyroscope to display on the web page
     """
     return jsonify(controller.get_gyroscope_data())
+
+
+@data_bp.route('/location')
+def plane_location():
+    return jsonify(dummy_coordinates)
