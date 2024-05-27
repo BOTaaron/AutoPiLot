@@ -15,7 +15,7 @@ class MotorController:
     def __init__(self, socketio):
         if not hasattr(self, 'initialised'):
             self.ESC_GPIO = 23
-            self.MIN_PULSE_WIDTH = 1100
+            self.MIN_PULSE_WIDTH = 800
             self.MAX_PULSE_WIDTH = 1940
             self.FREQUENCY = 50
             self.pwm = None
@@ -51,28 +51,26 @@ class MotorController:
         duty_cycle = (pulse_width / 20000.0) * 100
         self.pwm.ChangeDutyCycle(duty_cycle)
 
-    def set_duty_cycle(self, pulse_width):
-        self.current_pulse_width = pulse_width
-        duty_cycle = (pulse_width / 20000.0) * 100
-        self.pwm.ChangeDutyCycle(duty_cycle)
-
     def calibrate(self):
         threading.Thread(target=self._calibrate).start()
 
     def _calibrate(self):
         try:
-            self.socketio.emit('console_output', "Set throttle to maximum and connect the battery. Press Enter to continue.")
+            self.socketio.emit('console_output', "Throttle is set to maximum. Connect the battery and press enter.")
             self.wait_for_user_input()
+
             self.set_duty_cycle(self.MAX_PULSE_WIDTH)
             self.socketio.emit('console_output', "Waiting for ♪123 sound...")
             time.sleep(2)  # Wait for the user to hear the sound
 
             self.socketio.emit('console_output', "After hearing two short beeps, press Enter.")
             self.wait_for_user_input()
+
             self.set_duty_cycle(self.MIN_PULSE_WIDTH)
             self.socketio.emit('console_output', "Throttle set to minimum. Waiting for completion...")
             time.sleep(2)  # Wait for ESC to recognize the minimum throttle
-            self.socketio.emit('console_output', "Calibration complete. Listen for the number of LiPo cells and a long beep.")
+
+            self.socketio.emit('console_output', "Calibration complete. Listen for the number of LiPo cells and a long beep to confirm the process.")
         except Exception as e:
             self.socketio.emit('console_output', f"Error during calibration: {str(e)}")
 
@@ -85,18 +83,13 @@ class MotorController:
     def setup_socket_listener(self):
         @self.socketio.on('console_input')
         def handle_console_input(message):
-            if self.calibration_active and message.strip().lower() == 'enter':
+            if self.calibration_active and message.strip().lower() == '':
                 self.socketio.emit('user_acknowledged')
                 self.calibration_event.set()
 
-    def arm(self):
-        if not self.pwm:
-            print("PWM not initialised, initialising...")
-            self.setup_gpio()
-        print("Arming motor")
-        self.set_duty_cycle(self.MIN_PULSE_WIDTH)
-        time.sleep(1)
-        print("Motor armed")
+    def handle_empty_command(self):
+        if self.calibration_active:
+            self.calibration_event.set()
 
     def arm(self):
         if not self.pwm:
@@ -108,12 +101,17 @@ class MotorController:
         print("Motor armed")
 
     """Placeholder function, will later be changed to launch the drone"""
-    def go(self, increase):
-        if increase:
-            new_pulse_width = min(self.MAX_PULSE_WIDTH, self.current_pulse_width + 100)
+    def go(self, power_percentage):
+        if not self.pwm:
+            print("PWM not initialised, initialising...")
+            self.setup_gpio()
+
+        if 0 <= power_percentage <= 100:
+            pulse_width = self.MIN_PULSE_WIDTH + (self.MAX_PULSE_WIDTH - self.MIN_PULSE_WIDTH) * (power_percentage / 100)
+            self.set_duty_cycle(pulse_width)
+            print(f"Motor running at {power_percentage}% power")
         else:
-            new_pulse_width = max(self.MIN_PULSE_WIDTH, self.current_pulse_width - 100)
-        self.set_duty_cycle(new_pulse_width)
+            print("Invalid power percentage. Must be between 0 and 100.")
 
     def stop(self):
         print("Stopping motor")

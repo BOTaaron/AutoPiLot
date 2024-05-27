@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (commandForm) {
         commandForm.onsubmit = function(e) {
             e.preventDefault();
-            var input = document.getElementById('command-input');
+            let input = document.getElementById('command-input');
             if (input) {
                 socket.emit('console_input', input.value);  // Send command to server
                 input.value = '';  // Clear input after sending
@@ -79,7 +79,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         place: {
             weight: 1,
-            color: 'black'
+            color: 'rgb(253,153,0)',
+            fillColor: 'black'
         },
         park: {
             weight: 1,
@@ -101,18 +102,36 @@ document.addEventListener('DOMContentLoaded', () => {
             weight: 0, // Hide aerodrome labels
             color: 'none',
             fillColor: 'none'
+        },
+        place: {
+            weight: 1,
+            color: 'black',
+            fillColor: 'black'
+        },
+        transportation_name: {
+            weight: 1,
+            color: '#f24'
+        },
+         housenumber: {
+                weight: 1,
+                color: '#f24'
+         },
+        aeroway: {
+            weight: 1,
+            color: '#f24'
         }
+
     };
 
     // Initialize small map
     const smallMap = document.getElementById('small-map') // check map is on page before loading
     if (smallMap) {
-        let smallMap = L.map('small-map').setView([53.809, -1.5235], 14); // create map with initial coordinates with Leaflet
+        let smallMap = L.map('small-map').setView([53.809, -1.5235], 13); // create map with initial coordinates with Leaflet
 
         // load the map from the map file hosted by mbtileserver
         L.vectorGrid.protobuf('http://aaron.local:8000/services/leeds_map/tiles/{z}/{x}/{y}.pbf', {
             vectorTileLayerStyles,
-            maxZoom: 14,
+            maxZoom: 13,
             attribution: '© OpenStreetMap contributors'
         }).addTo(smallMap);
 
@@ -125,12 +144,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize full map
     const fullMap = document.getElementById('full-map'); // check map is on page before loading
     if (fullMap) {
-        let fullMap = L.map('full-map').setView([53.827, -1.593], 14); // create map with initial coordinates with leaflet
+        let fullMap = L.map('full-map').setView([53.827, -1.593], 13); // create map with initial coordinates with leaflet
 
         // load the map from the map file hosted by mbtileserver
         L.vectorGrid.protobuf('http://aaron.local:8000/services/leeds_map/tiles/{z}/{x}/{y}.pbf', {
             vectorTileLayerStyles,
-            maxZoom: 14,
+            maxZoom: 13,
             attribution: '© OpenStreetMap contributors'
         }).addTo(fullMap);
 
