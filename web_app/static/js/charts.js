@@ -97,19 +97,19 @@ function drawChart() {
     altitudeData.addColumn('datetime', 'Time');
     altitudeData.addColumn('number', 'Altitude');
     altitudeData.addRow([new Date(), 0]); // Initial row
-    let altitudeOptions = {
-        width: 500, height: 200,
-        backgroundColor: '#2e2e2e',
-        hAxis: {title: 'Time', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
-        vAxis: {title: 'Altitude (m)', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
-        legend: { position: 'bottom', textStyle: {color: '#ffffff'} },
-        curveType: 'function',
-        colors: ['#00ff00'],
-        fontName: 'Roboto',
-        titleTextStyle: {
-            color: '#ffffff'
-        }
-    };
+let altitudeOptions = {
+    height: 200,  // Adjust as necessary
+    backgroundColor: '#2e2e2e',
+    hAxis: {title: 'Time', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
+    vAxis: {title: 'Altitude (m)', textStyle: {color: '#ffffff'}, titleTextStyle: {color: '#ffffff'}},
+    legend: { position: 'bottom', textStyle: {color: '#ffffff'} },
+    curveType: 'function',
+    colors: ['#00ff00'],
+    fontName: 'Roboto',
+    titleTextStyle: {
+        color: '#ffffff'
+    }
+};
     let altitudeChart = new google.visualization.LineChart(document.getElementById('altitude_chart_div'));
     altitudeChart.draw(altitudeData, altitudeOptions);
 

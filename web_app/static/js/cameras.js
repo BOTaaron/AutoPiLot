@@ -47,10 +47,3 @@ function toggleCamera(cameraType) {
     }
 }
 */
-
-function updateThermalFeed(cameraDiv, cameraUrl) {
-    let img = cameraDiv.querySelector('img');
-    if (img) {
-        img.src = cameraUrl + '?t=' + new Date().getTime(); // timestamp prevents caching
-    }
-}

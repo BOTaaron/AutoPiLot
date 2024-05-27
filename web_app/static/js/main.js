@@ -3,10 +3,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Listen for console output
     socket.on('console_output', function(msg) {
-        let textarea = document.getElementById('console');
-        if (textarea) {
-            textarea.value += msg + '\n';  // Append message to textarea
-            textarea.scrollTop = textarea.scrollHeight;
+        let consoleOutput = document.getElementById('console-output');
+        if (consoleOutput) {
+            let timestamp = new Date().toLocaleTimeString();
+            consoleOutput.innerHTML += `<div><span class="timestamp">${timestamp}</span> ${msg}</div>`;
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
         }
     });
 
@@ -22,6 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
+
+    // Clear console button
+    const clearConsoleButton = document.getElementById('clear-console');
+    if (clearConsoleButton) {
+        clearConsoleButton.onclick = function() {
+            let consoleOutput = document.getElementById('console-output');
+            if (consoleOutput) {
+                consoleOutput.innerHTML = '';
+            }
+        };
+    }
+
 
     // Initialize small map, setting attribute values from http://aaron.local:8000/services/leeds_map
  const vectorTileLayerStyles = {
@@ -51,7 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         transportation: {
             weight: 1,
-            color: 'black'
+            color: 'black',
+            opacity: 0.5
         },
         waterway: {
             weight: 1,
@@ -91,30 +105,36 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initialize small map
-    if (document.getElementById('small-map')) {
-        let smallMap = L.map('small-map').setView([53.809, -1.5235], 14);
+    const smallMap = document.getElementById('small-map') // check map is on page before loading
+    if (smallMap) {
+        let smallMap = L.map('small-map').setView([53.809, -1.5235], 14); // create map with initial coordinates with Leaflet
 
+        // load the map from the map file hosted by mbtileserver
         L.vectorGrid.protobuf('http://aaron.local:8000/services/leeds_map/tiles/{z}/{x}/{y}.pbf', {
             vectorTileLayerStyles,
             maxZoom: 14,
             attribution: '© OpenStreetMap contributors'
         }).addTo(smallMap);
 
-        let planeMarker = L.marker([53.827, -1.593]).addTo(fullMap);
+        // dummy coordinates to represent the plane's location, to be replaced by GPS when connection is available
+        let planeMarker = L.marker([53.827, -1.593]).addTo(smallMap);
         planeMarker.bindPopup("AutoPiLot 1").openPopup();
 
     }
 
     // Initialize full map
-    if (document.getElementById('full-map')) {
-        let fullMap = L.map('full-map').setView([53.827, -1.593], 14);
+    const fullMap = document.getElementById('full-map'); // check map is on page before loading
+    if (fullMap) {
+        let fullMap = L.map('full-map').setView([53.827, -1.593], 14); // create map with initial coordinates with leaflet
 
+        // load the map from the map file hosted by mbtileserver
         L.vectorGrid.protobuf('http://aaron.local:8000/services/leeds_map/tiles/{z}/{x}/{y}.pbf', {
             vectorTileLayerStyles,
             maxZoom: 14,
             attribution: '© OpenStreetMap contributors'
         }).addTo(fullMap);
 
+        // dummy coordinates to represent the plane's location, to be replaced by GPS when connection is available
         let planeMarker = L.marker([53.827, -1.5938]).addTo(fullMap);
         planeMarker.bindPopup("AutoPiLot 1").openPopup();
     }

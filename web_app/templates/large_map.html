@@ -5,14 +5,15 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}">
     <title>Drone Control Interface</title>
 
-
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet.vectorgrid@latest/dist/Leaflet.VectorGrid.bundled.js"></script>
 </head>
 <body>
+
     <div class="navbar">
         <a href="/">Home</a>
         <a href="/control">Control</a>
@@ -20,6 +21,11 @@
         <a href="/large_map">Map</a>
     </div>
 
-    <div id="full-map"></div>
+
+    <div class="card map">
+        <div class="card-header">Map</div>
+        <div id="full-map"></div>
+    </div>
+
 </body>
 </html>
