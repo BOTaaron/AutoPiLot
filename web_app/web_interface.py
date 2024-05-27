@@ -6,6 +6,7 @@ from web_app.routes.camera_routes import camera_bp
 from web_app.routes.data_routes import create_data_routes
 from web_app.routes.map_routes import maps_bp
 from web_app.blueprints.motor.motor_manager import get_motor_controller
+from dash_app import app as dash_app
 
 app = Flask(__name__)
 
@@ -19,6 +20,8 @@ app.register_blueprint(motor_bp)
 
 data_bp = create_data_routes(socketio)
 app.register_blueprint(data_bp)
+
+dash_app.init_app(app)
 
 @app.route('/')
 def index():

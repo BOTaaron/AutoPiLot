@@ -27,6 +27,7 @@ body {
 
 .main-container {
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     padding: 10px;
     height: 75vh;
@@ -41,29 +42,8 @@ body {
     flex: 1;
 }
 
-.card-header {
-    background-color: #333;
-    padding: 10px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    font-size: 1.2em;
-    margin-bottom: 10px;
-}
 
-.gauge-container {
-    display: flex;
-    justify-content: space-around;
-}
 
-.gauge-container div {
-    flex: 1;
-    margin: 0 5px;
-}
-
-#altitude_chart_div {
-    width: 100%;
-    height: 200px;
-}
 
 #motor_chart_div, #airspeed_chart_div, #temperature_chart_div, #barometric_pressure_div {
     height: 150px;
@@ -77,7 +57,6 @@ body {
     padding-left: 20px;
 }
 
-/* Console Styles */
 .card-header {
     background-color: #333;
     padding: 10px;
@@ -213,10 +192,63 @@ button:hover {
     text-align: center;
 }
 
+.data-dashboard {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+}
 
+.dash-graph {
+    height: 100%;
+    width: 100%;
+    background-color: #2e2e2e;
+}
 
+.dash-graph-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
 
+.dash-gauge-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
 
+.dash-graph, .dash-gauge {
+    flex: 1;
+    margin: 10px;
+    background-color: #2e2e2e;
+}
 
+.dash-container {
+    width:100%;
+    height: 100%;
+}
 
+.dash-iframe {
+    width: 100%;
+    height: 100%;
+}
+
+.dash-graph-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.dash-gauge-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.dash-graph, .dash-gauge {
+    flex: 1;
+    margin: 10px;
+    background-color: #2e2e2e;
+}
 

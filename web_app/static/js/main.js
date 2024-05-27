@@ -158,3 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
         planeMarker.bindPopup("AutoPiLot 1").openPopup();
     }
 });
+
+function sendCommand(command) {
+    fetch(`/motor/${command}`, { method: 'POST' })
+    .then(response => response.json())
+    .then(data => console.log(data.status))
+    .catch(error => console.error('Error:', error));
+}
